@@ -169,6 +169,7 @@ class BigCell: UITableViewCell {
     
     //MARK: - Methods (Logic Part)
     func fetchImageUrls(arrayOfImageUrls: [Object.Images]) {
+        // Как пример, если бы это был фетчинг из сети,то можно было бы сделать на подобие этого ( только может с другим кьюосом, утилити например )
         DispatchQueue.global(qos: .userInitiated).async {
             for i in arrayOfImageUrls {
                 if (i.url != nil) {
