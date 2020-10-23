@@ -13,11 +13,12 @@
 		ED6975222539279900EFBB23 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED6975202539279900EFBB23 /* LaunchScreen.storyboard */; };
 		ED69752A253A3B4B00EFBB23 /* Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED697529253A3B4B00EFBB23 /* Object.swift */; };
 		ED69752C253A839500EFBB23 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED69752B253A839500EFBB23 /* DetailViewController.swift */; };
-		EDB4E4D8253D18D000492709 /* TestController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4E4D7253D18D000492709 /* TestController.swift */; };
 		EDB4E4DA253DF14B00492709 /* MainCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4E4D9253DF14B00492709 /* MainCell.swift */; };
 		EDB4E4DC253DFF0C00492709 /* ProgressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4E4DB253DFF0C00492709 /* ProgressCell.swift */; };
 		EDB4E4DE253E06AF00492709 /* BigCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4E4DD253E06AF00492709 /* BigCell.swift */; };
 		EDB4E4E0253E148A00492709 /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4E4DF253E148A00492709 /* PhotoCollectionViewCell.swift */; };
+		EDB4E4E325420E6300492709 /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4E4E225420E6300492709 /* Downloader.swift */; };
+		EDB4E4E52542661600492709 /* JsonParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4E4E42542661600492709 /* JsonParser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,11 +30,12 @@
 		ED6975232539279900EFBB23 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ED697529253A3B4B00EFBB23 /* Object.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Object.swift; sourceTree = "<group>"; };
 		ED69752B253A839500EFBB23 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		EDB4E4D7253D18D000492709 /* TestController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestController.swift; sourceTree = "<group>"; };
 		EDB4E4D9253DF14B00492709 /* MainCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCell.swift; sourceTree = "<group>"; };
 		EDB4E4DB253DFF0C00492709 /* ProgressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCell.swift; sourceTree = "<group>"; };
 		EDB4E4DD253E06AF00492709 /* BigCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigCell.swift; sourceTree = "<group>"; };
 		EDB4E4DF253E148A00492709 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
+		EDB4E4E225420E6300492709 /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
+		EDB4E4E42542661600492709 /* JsonParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonParser.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,15 +68,14 @@
 		ED6975142539279800EFBB23 /* TestTaskJson */ = {
 			isa = PBXGroup;
 			children = (
+				EDB4E4E82542738000492709 /* Models */,
+				EDB4E4E72542736F00492709 /* Controllers */,
+				EDB4E4E125420E5000492709 /* Helpers */,
 				EDB4E4D6253D16B100492709 /* Cells */,
 				ED6975152539279800EFBB23 /* AppDelegate.swift */,
-				ED6975192539279800EFBB23 /* ViewController.swift */,
 				ED69751E2539279900EFBB23 /* Assets.xcassets */,
 				ED6975202539279900EFBB23 /* LaunchScreen.storyboard */,
 				ED6975232539279900EFBB23 /* Info.plist */,
-				ED697529253A3B4B00EFBB23 /* Object.swift */,
-				ED69752B253A839500EFBB23 /* DetailViewController.swift */,
-				EDB4E4D7253D18D000492709 /* TestController.swift */,
 			);
 			path = TestTaskJson;
 			sourceTree = "<group>";
@@ -88,6 +89,40 @@
 				EDB4E4DF253E148A00492709 /* PhotoCollectionViewCell.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		EDB4E4E125420E5000492709 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				EDB4E4E62542735F00492709 /* Networking */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		EDB4E4E62542735F00492709 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				EDB4E4E225420E6300492709 /* Downloader.swift */,
+				EDB4E4E42542661600492709 /* JsonParser.swift */,
+			);
+			name = Networking;
+			sourceTree = "<group>";
+		};
+		EDB4E4E72542736F00492709 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				ED6975192539279800EFBB23 /* ViewController.swift */,
+				ED69752B253A839500EFBB23 /* DetailViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		EDB4E4E82542738000492709 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				ED697529253A3B4B00EFBB23 /* Object.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -160,12 +195,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EDB4E4D8253D18D000492709 /* TestController.swift in Sources */,
 				ED69751A2539279800EFBB23 /* ViewController.swift in Sources */,
 				EDB4E4DE253E06AF00492709 /* BigCell.swift in Sources */,
 				EDB4E4DA253DF14B00492709 /* MainCell.swift in Sources */,
 				ED6975162539279800EFBB23 /* AppDelegate.swift in Sources */,
 				EDB4E4E0253E148A00492709 /* PhotoCollectionViewCell.swift in Sources */,
+				EDB4E4E325420E6300492709 /* Downloader.swift in Sources */,
+				EDB4E4E52542661600492709 /* JsonParser.swift in Sources */,
 				EDB4E4DC253DFF0C00492709 /* ProgressCell.swift in Sources */,
 				ED69752C253A839500EFBB23 /* DetailViewController.swift in Sources */,
 				ED69752A253A3B4B00EFBB23 /* Object.swift in Sources */,

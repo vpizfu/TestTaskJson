@@ -10,18 +10,15 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    //MARK: - Variables and Constants
     var objectArray: [Object]? = nil
     let tableView = UITableView()
     
+    //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
-        parseJson(url: "https://www.dl.dropboxusercontent.com/s/zjjioeld6zbqu35/listings-temp.json") { (objects) in
-            self.objectArray = objects
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
+        fillTableWithObjects()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -29,35 +26,32 @@ class ViewController: UIViewController {
         self.navigationItem.title = "Choose car"
     }
     
+    //MARK: - Methods (UI Part)
     func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
-    func parseJson(url: String, completion: @escaping ( _ objects: [Object]) -> Void) {
-        if let url = URL(string: url) {
-            URLSession.shared.dataTask(with: url) { data, response, error in
-                if let data = data {
-                    if let jsonString = String(data: data, encoding: .utf8) {
-                        let jsonData = jsonString.data(using: .utf8)!
-                        let response = try! JSONDecoder().decode([Object].self, from: jsonData)
-                        completion(response)
-                    }
-                }
-            }.resume()
+    //MARK: - Methods (Logic Part)
+    func fillTableWithObjects() {
+        JsonParser().parseJson(url: "https://www.dl.dropboxusercontent.com/s/zjjioeld6zbqu35/listings-temp.json") { (objects) in
+            self.objectArray = objects
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
     }
 }
 
+//MARK: - UITableViewDataSource
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return objectArray?.count ?? 0
@@ -72,7 +66,6 @@ extension ViewController: UITableViewDataSource {
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = DetailViewController(object: (objectArray?[indexPath.row])!)
-        vc.modalPresentationStyle = .fullScreen
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

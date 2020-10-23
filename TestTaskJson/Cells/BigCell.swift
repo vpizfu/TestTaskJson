@@ -8,21 +8,11 @@
 
 import UIKit
 
-class BigCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
+class BigCell: UITableViewCell {
     
-   
-    
+    //MARK: - Variables and Constants
     let view = UIView()
-    let additionalView = UIView()
     var arrayOfImageUrls = [String]()
-    
-    var numberOfPhotos = 0
-    
     var viewPhotos: UICollectionView!
     
     let shareButton: UIButton = {
@@ -31,15 +21,15 @@ class BigCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSo
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
-    let labelTwo: UILabel = {
+    
+    let labelPrice: UILabel = {
         let label = UILabel()
         label.font = label.font.withSize(25)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    let labelThree: UILabel = {
+    let labelTitle: UILabel = {
         let label = UILabel()
         label.font = label.font.withSize(18)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -88,63 +78,16 @@ class BigCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSo
         return label
     }()
     
-    let scrollView: UIScrollView = {
-        let v = UIScrollView()
-        v.translatesAutoresizingMaskIntoConstraints = false
-        v.backgroundColor = .white
-        return v
+    let layout: UICollectionViewFlowLayout = {
+        let layoutTmp = UICollectionViewFlowLayout()
+        layoutTmp.scrollDirection = .horizontal
+        layoutTmp.minimumLineSpacing = 0
+        return layoutTmp
     }()
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return arrayOfImageUrls.count
-    }
-    
-    func setupCollectionViewCell(arrayOfImageUrls: [Object.Images]) {
-        for i in arrayOfImageUrls {
-            if (i.url != nil) {
-                if (!self.arrayOfImageUrls.contains(i.url!)) {
-                    self.arrayOfImageUrls.append(i.url!)
-                }
-            } else if (i.uri != nil) {
-                if (!self.arrayOfImageUrls.contains(i.uri!)) {
-                    self.arrayOfImageUrls.append(i.uri!)
-                }
-            }
-        }
-        viewPhotos.reloadData()
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewID", for: indexPath as IndexPath) as! PhotoCollectionViewCell
-        cell.backgroundColor = .white
-        cell.setupCell(url: arrayOfImageUrls[indexPath.row])
-        cell.imageView.image = UIImage(named: "carPlaceholder")
-        downloadImage(from: URL(string: arrayOfImageUrls[indexPath.row])!, completion: { (image, url) in
-            if url.absoluteString == cell.imageUrl! {
-                cell.imageView.image = image
-            }
-        })
+    //MARK: - Methods (UI Part)
+    func setupCell(object: Object?) {
         
-        return cell
-    }
-    
-    func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
-        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
-    }
-    
-    func downloadImage(from url: URL, completion: @escaping (UIImage, URL) -> ()) {
-        print("Download Started")
-        getData(from: url) { data, response, error in
-            guard let data = data, error == nil else { return }
-            print(response?.suggestedFilename ?? url.lastPathComponent)
-            print("Download Finished")
-            DispatchQueue.main.async() {
-                completion(UIImage(data: data)!, url)
-            }
-        }
-    }
-    
-    func setupCell() {
         self.contentView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.topAnchor.constraint(equalTo: self.contentView.centerYAnchor).isActive = true
@@ -152,94 +95,140 @@ class BigCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSo
         view.rightAnchor.constraint(equalTo: self.contentView.rightAnchor).isActive = true
         view.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive = true
         
-        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 0
         layout.itemSize = CGSize(width: self.contentView.frame.width, height: self.contentView.frame.height / 2)
+
         viewPhotos = UICollectionView(frame: self.bounds, collectionViewLayout: layout)
-        viewPhotos.collectionViewLayout = layout
         viewPhotos.showsHorizontalScrollIndicator = true
         viewPhotos.indicatorStyle = .white
         viewPhotos.isPagingEnabled = true
-        viewPhotos.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: "collectionViewID")
-        
-        viewPhotos.dataSource = self
-        viewPhotos.delegate = self
         viewPhotos.backgroundColor = .white
+        viewPhotos.translatesAutoresizingMaskIntoConstraints = false
+          
+        viewPhotos.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: "collectionViewID")
+        viewPhotos.collectionViewLayout = layout
+        viewPhotos.dataSource = self
+        	
         
         self.contentView.addSubview(viewPhotos)
-        
-        viewPhotos.translatesAutoresizingMaskIntoConstraints = false
         viewPhotos.leftAnchor.constraint(equalTo: self.contentView.leftAnchor).isActive = true
         viewPhotos.rightAnchor.constraint(equalTo: self.contentView.rightAnchor).isActive = true
         viewPhotos.topAnchor.constraint(equalTo: self.contentView.topAnchor).isActive = true
         viewPhotos.bottomAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-
-            // add labelTwo to the scroll view
-            view.addSubview(labelTwo)
-
         
-
-            // constrain labelTwo at 1000-pts from the top
-            labelTwo.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 18).isActive = true
-
-            // constrain labelTwo to right & bottom with 16-pts padding
-            labelTwo.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 18).isActive = true
-            //labelTwo.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16.0).isActive = true
-            
-            view.addSubview(shareButton)
-            
-            shareButton.topAnchor.constraint(equalTo: labelTwo.topAnchor).isActive = true
-            shareButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -18).isActive = true
-            
-            view.addSubview(labelThree)
-            
-            // constrain labelTwo at 1000-pts from the top
-            labelThree.topAnchor.constraint(equalTo: labelTwo.bottomAnchor, constant: 18).isActive = true
-
-            // constrain labelTwo to right & bottom with 16-pts padding
-            labelThree.leftAnchor.constraint(equalTo: labelTwo.leftAnchor).isActive = true
-            //labelTwo.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16.0).isActive = true
-            
-            view.addSubview(labelYear)
-            
-            labelYear.topAnchor.constraint(equalTo: labelThree.bottomAnchor, constant: 10).isActive = true
-
-            // constrain labelTwo to right & bottom with 16-pts padding
-            labelYear.leftAnchor.constraint(equalTo: labelThree.leftAnchor).isActive = true
-            labelYear.widthAnchor.constraint(equalToConstant: 45).isActive = true
-            labelYear.heightAnchor.constraint(equalToConstant: 22).isActive = true
-            
-            view.addSubview(labelMileage)
-            
-            labelMileage.centerYAnchor.constraint(equalTo: labelYear.centerYAnchor).isActive = true
-
-            // constrain labelTwo to right & bottom with 16-pts padding
-            labelMileage.leftAnchor.constraint(equalTo: labelYear.rightAnchor, constant: 10).isActive = true
-            
-            view.addSubview(labelZipCode)
-            
-            labelZipCode.centerYAnchor.constraint(equalTo: labelYear.centerYAnchor).isActive = true
-
-            // constrain labelTwo to right & bottom with 16-pts padding
-            labelZipCode.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -70).isActive = true
-            
-            view.addSubview(labelHistory)
-            
-            labelHistory.topAnchor.constraint(equalTo: labelYear.bottomAnchor, constant: 10).isActive = true
-
-            // constrain labelTwo to right & bottom with 16-pts padding
-            labelHistory.leftAnchor.constraint(equalTo: labelYear.leftAnchor).isActive = true
-            labelHistory.heightAnchor.constraint(equalToConstant: 22).isActive = true
-            labelHistory.widthAnchor.constraint(equalToConstant: 140).isActive = true
+      
+        view.addSubview(labelPrice)
+        labelPrice.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 18).isActive = true
+        labelPrice.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 18).isActive = true
+       
         
-            
+        view.addSubview(shareButton)
+        
+        shareButton.topAnchor.constraint(equalTo: labelPrice.topAnchor).isActive = true
+        shareButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -18).isActive = true
+        
+        
+        view.addSubview(labelTitle)
+        
+        labelTitle.topAnchor.constraint(equalTo: labelPrice.bottomAnchor, constant: 18).isActive = true
+        labelTitle.leftAnchor.constraint(equalTo: labelPrice.leftAnchor).isActive = true
+       
+        
+        view.addSubview(labelYear)
+        
+        labelYear.topAnchor.constraint(equalTo: labelTitle.bottomAnchor, constant: 10).isActive = true
+        labelYear.leftAnchor.constraint(equalTo: labelTitle.leftAnchor).isActive = true
+        labelYear.widthAnchor.constraint(equalToConstant: 45).isActive = true
+        labelYear.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        
+        view.addSubview(labelMileage)
+        
+        labelMileage.centerYAnchor.constraint(equalTo: labelYear.centerYAnchor).isActive = true
+        labelMileage.leftAnchor.constraint(equalTo: labelYear.rightAnchor, constant: 10).isActive = true
+        
+        view.addSubview(labelZipCode)
+        
+        labelZipCode.centerYAnchor.constraint(equalTo: labelYear.centerYAnchor).isActive = true
+        labelZipCode.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -70).isActive = true
+        
+        view.addSubview(labelHistory)
+        
+        labelHistory.topAnchor.constraint(equalTo: labelYear.bottomAnchor, constant: 10).isActive = true
+        labelHistory.leftAnchor.constraint(equalTo: labelYear.leftAnchor).isActive = true
+        labelHistory.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        labelHistory.widthAnchor.constraint(equalToConstant: 140).isActive = true
+        
+        
+        
+        self.fetchImageUrls(arrayOfImageUrls: object!.images)
+        self.labelPrice.text = "$\(object?.price ?? 0)"
+        self.createAttributedTitle(object: object, label: self.labelTitle)
+        self.labelYear.text = "\(object?.year ?? 0)"
+        self.labelMileage.text = "\(object?.mileage ?? 0) miles"
+        self.labelZipCode.text = "\(object?.addresses[0].zipcode ?? "No Zip Code")"
     }
-
+    
+    //MARK: - Methods (Logic Part)
+    func fetchImageUrls(arrayOfImageUrls: [Object.Images]) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            for i in arrayOfImageUrls {
+                if (i.url != nil) {
+                    if (!self.arrayOfImageUrls.contains(i.url!)) {
+                        self.arrayOfImageUrls.append(i.url!)
+                    }
+                } else if (i.uri != nil) {
+                    if (!self.arrayOfImageUrls.contains(i.uri!)) {
+                        self.arrayOfImageUrls.append(i.uri!)
+                    }
+                }
+            }
+            DispatchQueue.main.async {
+                self.viewPhotos.reloadData()
+            }
+        }
+    }
+    
+    func createAttributedTitle(object: Object?, label: UILabel) {
+           let attrs = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 19)]
+           let lightAttrs = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 19.0), NSAttributedString.Key.foregroundColor : UIColor.lightGray]
+           let firstString = NSMutableAttributedString(string:"\(object?.make ?? "no make") ", attributes:attrs)
+           let secondString = NSMutableAttributedString(string:"\(object?.model ?? "no model") ", attributes:attrs)
+           let thirdString = NSMutableAttributedString(string:object?.trim ?? "no trim", attributes:lightAttrs)
+           firstString.append(secondString)
+           firstString.append(thirdString)
+           label.attributedText = firstString
+       }
+    
+    //MARK: - Others
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
+    
+}
 
+//MARK: - UICollectionViewDataSource
+extension BigCell: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return arrayOfImageUrls.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewID", for: indexPath as IndexPath) as! PhotoCollectionViewCell
+        cell.backgroundColor = .white
+        cell.setupCell(url: arrayOfImageUrls[indexPath.row])
+        cell.imageView.image = UIImage(named: "carPlaceholder")
+        Downloader().downloadImage(from: URL(string: arrayOfImageUrls[indexPath.row])!, completion: { (image, url) in
+            if url.absoluteString == cell.imageUrl! {
+                cell.imageView.image = image
+            }
+        })
+        
+        return cell
+    }
 }

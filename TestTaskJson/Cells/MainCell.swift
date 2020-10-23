@@ -10,21 +10,15 @@ import UIKit
 
 class MainCell: UITableViewCell {
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
+    //MARK: - Variables and Constants
     let mainLabel = UILabel()
     let descriptionLabel = UILabel()
     let arrowImageView = UIImageView()
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-    }
-    
-    func setupCell() {
+    var descriptionLabelRightAnchor = NSLayoutConstraint()
+        
+    //MARK: - Methods (UI Part)
+    func setupCell(mainLabelText: String, descriptionLabelText: String) {
+        
         self.contentView.addSubview(mainLabel)
         self.contentView.addSubview(descriptionLabel)
         self.contentView.addSubview(arrowImageView)
@@ -36,19 +30,51 @@ class MainCell: UITableViewCell {
         mainLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor).isActive = true
         mainLabel.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: 20).isActive = true
         
-        
         arrowImageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor).isActive = true
         arrowImageView.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -10).isActive = true
         arrowImageView.image = UIImage(named: "tableArrow")?.withTintColor(.lightGray)
         
         descriptionLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor).isActive = true
-        descriptionLabel.rightAnchor.constraint(equalTo: arrowImageView.rightAnchor, constant: -30).isActive = true
         descriptionLabel.textColor = .lightGray
+        
+        self.mainLabel.text = mainLabelText
+               self.descriptionLabel.text = descriptionLabelText
+               
+               switch mainLabelText {
+               case "Mileage":
+                    self.removeArrow()
+               case "Features":
+                    self.addArrow()
+                    self.descriptionLabel.textColor = .systemBlue
+               default:
+                    self.addArrow()
+                    self.descriptionLabel.textColor = .lightGray
+               }
     }
     
-    func deleteArrow() {
-        arrowImageView.isHidden = true
-        descriptionLabel.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -10).isActive = true
+    func removeArrow() {
+        arrowImageView.removeFromSuperview()
+        descriptionLabelRightAnchor.isActive = false
+        descriptionLabelRightAnchor = descriptionLabel.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -10)
+        descriptionLabelRightAnchor.isActive = true
+    }
+    
+    func addArrow() {
+        descriptionLabelRightAnchor.isActive = false
+        descriptionLabelRightAnchor = descriptionLabel.rightAnchor.constraint(equalTo: arrowImageView.rightAnchor, constant: -30)
+        descriptionLabelRightAnchor.isActive = true
+    }
+    
+    
+    //MARK: - Others
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+
     }
 
 }
